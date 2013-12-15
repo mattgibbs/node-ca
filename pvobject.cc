@@ -6,13 +6,9 @@
 using namespace v8;
 
 Persistent<Function> PVObject::constructor;
-//uv_async_t async_connect_handle;
-//uv_async_t async_disconnected_handle;
-//uv_async_t async_event_handle;
-//uv_mutex_t mutex;
 
 PVObject::PVObject(std::string pvName, Persistent<Function> callback) : pv_(pvName) {
-  //Set up handles to v8 callbacks, and thread-synchronization stuff.s
+  //Set up handles to v8 callbacks, and thread-synchronization stuff.
   uv_async_init(uv_default_loop(), &async_event_handle, v8_event_handler);
   uv_mutex_init(&mutex);
   connected = false;
@@ -49,7 +45,6 @@ Handle<Value> PVObject::New(const Arguments& args) {
   
   if (args.IsConstructCall()) {
     //If we call this as a constructor, like 'new PVObject(blah)'
-    //double value = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
     String::AsciiValue inputString(args[0]->ToString());
     std::string pvString = *inputString;
     Local<Function> cb = Local<Function>::Cast(args[1]);
@@ -63,7 +58,6 @@ Handle<Value> PVObject::New(const Arguments& args) {
     return args.This();
   } else {
     //If we just call this as a normal function, like 'PVObject(blah)', make it a constructor call.
-    std::cout << args.Length() << std::endl;
     const int argc = 2;
     Local<Value> argv[argc] = { args[0], args[1] };
     return scope.Close(constructor->NewInstance(argc, argv));
@@ -372,19 +366,9 @@ void PVObject::v8_event_handler(uv_async_t *handle, int status) {
   uv_mutex_unlock(&self->mutex);
 	const unsigned argc = 1;
 	Local<Value> argv[argc] = { dataObj };
-	//Local<Value> argv[argc] = { Local<Value>::New(String::New("new data goes here.")) };
   self->dataCallback->Call(Context::GetCurrent()->Global(), argc, argv);
   
 	return;
-}
-
-Handle<Value> PVObject::runCallback(Local<Value> data) {
-  HandleScope scope;
-	const unsigned argc = 1;
-	//Local<Value> argv[argc] = { data };
-	Local<Value> argv[argc] = { Local<Value>::New(String::New("new data goes here.")) };
-  this->dataCallback->Call(Context::GetCurrent()->Global(), argc, argv);
-  return scope.Close(Undefined());
 }
 
 Handle<Value> PVObject::getChannel(const Arguments& args) {

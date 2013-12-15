@@ -15,8 +15,6 @@ class PVObject : public node::ObjectWrap {
     uv_mutex_t mutex;
     v8::Persistent<v8::Function> dataCallback;
     void connectionMade();
-    v8::Handle<v8::Value> runCallback(v8::Local<v8::Value> data);
-    //void connectionEnded();
     chid chan;
   private:
     explicit PVObject(std::string pvName, v8::Persistent<v8::Function> callback);
