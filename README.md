@@ -10,5 +10,5 @@ Require the addon, then create a PV object.  The callback will run whenever the 
     var epicsAddon = require("./build/Release/nodeca.node");
     
     var obj = epicsAddon.PVObject("BPMS:LI23:401:X1H",function(data){
-    console.log(data);
+      console.log(data);
     });
